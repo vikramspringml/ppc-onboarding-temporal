@@ -1,0 +1,9 @@
+steps:
+  - name: maven:3-jdk-11
+    entrypoint: mvn
+    args: ['-DskipTests=true', 'clean', 'install', 'spring-boot:repackage']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [ 'build', '-t', 'us.gcr.io/${PROJECT_ID}/temporal-springboot-demo:default', '.' ]
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [ 'push', 'us.gcr.io/${PROJECT_ID}/temporal-springboot-demo:default']
+images: [ 'us.gcr.io/${PROJECT_ID}/temporal-springboot-demo:default' ]

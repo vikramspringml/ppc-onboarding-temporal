@@ -35,3 +35,77 @@ private final RetryOptions retryoptions = RetryOptions.newBuilder().setInitialIn
 ## What is Temporal.io ?
 
 [Temporal](https://docs.temporal.io/) ```https://github.com/temporalio``` is an orchestration engine (MIT License) that can be used to orchestrate services at scale.
+
+
+### Manually Create container image
+
+#### Build and package the code by running mvn
+```shell
+mvn -DskipTests=true clean install spring-boot:repackage
+```
+
+#### Login to gcloud with your auth
+```shell
+gcloud auth login
+```
+
+#### Deploy the container to us.gcr.io
+```shell 
+gcloud builds submit .
+--tag us.gcr.io/{gcp-projectid}/{container-name}
+```
+
+### Alternatively - Cloud Build command to Build and create image on GCR.IO
+```shell
+gcloud builds submit .
+```
+
+### Deploy to GKE
+Run the following commands on cloud shell to authenticate gcloud, authenticate w GKE cluster and add master authorized network
+```
+gcloud auth login
+
+gcloud config set project {PROJECT_ID}
+
+gcloud container clusters get-credentials 
+${GKE_CLUSTER} --region {GKE_CLUSTER_REGION} 
+--project {PROJECT_ID}
+
+gcloud container clusters update {GKE_CLUSTER} 
+--region {GKE_CLUSTER_REGION} 
+--enable-master-authorized-networks 
+--master-authorized-networks $(dig +short myip.opendns.com @resolver1.opendns.com)/32
+```
+
+### Apply the GKE Deployments
+
+#### App containing the API to trigger the workflow
+- Apply workflow API service deployment
+```shell
+kubectl apply -f k8s/service.yaml
+```
+Verify your deployment using the deployment name <b>temporal-demo-api</b>
+
+#### App containing the worker to poll workflow task queue and handle activities
+- Apply workflow worker (Poller) deployment
+```shell
+kubectl apply -f k8s/deployment.yaml
+```
+Verify your deployment using the deployment name <b>temporal-demo-worker</b>
+
+### Test workflow on GKE
+
+#### Create port forward for web to view the Temporal Web UI
+```shell
+kubectl port-forward services/temporaltest-web 8088:8088
+```
+Navigate to http://localhost:8888 on your browser
+
+#### Create port forward for temporal-service-api to invoke the workflow
+```shell
+kubectl port-forward services/temporal-demo-api-svc 8080:80
+```
+Invoke the API on curl using 
+```shell 
+curl -X POST http://localhost:8080/startWorkflow?id=002
+``` 

@@ -12,12 +12,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.apache.commons.lang3.StringUtils;
 
 @Component
 @Configuration
 public class TemporalConfig {
 
-    private String temporalServiceAddress = "127.0.0.1:7233";
+    private String temporalServiceAddress = StringUtils.defaultString(System.getenv("TEMPORAL_SVC_ADDR"), "127.0.0.1:7233");
 
     private String temporalNamespace = "default";
 

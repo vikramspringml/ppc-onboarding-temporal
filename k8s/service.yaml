@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: temporal-demo-api
+  namespace: default
+spec:
+  # replicas: 5
+  selector:
+    matchLabels:
+      app: temporal-demo-api
+  template:
+    metadata:
+      labels:
+        app: temporal-demo-api
+    spec:
+      containers:
+        - name: temporal-demo-api
+          image: us.gcr.io/cbregcpsandbox/temporal-springboot-demo:default
+          imagePullPolicy: Always
+          env:
+            - name: SPRING_PROFILE
+              value: ERROR
+            - name: WORKER
+              value: ERROR
+            - name: TEMPORAL_SVC_ADDR
+              value: "temporaltest-frontend:7233"
+          resources:
+            limits:
+              cpu: 500m
+              memory: 500Mi
+            requests:
+              cpu: 500m
+              memory: 500Mi
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: temporal-demo-api-svc
+spec:
+  selector:
+    app: temporal-demo-api
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
