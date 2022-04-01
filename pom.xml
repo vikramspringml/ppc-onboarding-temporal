@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.springml.temporal</groupId>
-	<artifactId>temporal-springboot-demo</artifactId>
+	<artifactId>ppconboarding-workflow</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>temporal-demo</name>
-	<description>Temporal Demo project for Spring Boot</description>
+	<name>ppconboarding-workflow</name>
+	<description>PPC Temporal Demo workflow</description>
 	<properties>
 		<java.version>11</java.version>
 	</properties>
