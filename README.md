@@ -20,13 +20,19 @@ Invoke the REST API to view the status of the workflow instance using GET ```htt
 On a web browser, navigate to ```http://localhost:8088/``` to access the Temporal UI to observe the workflow instances. 
 
 ## What does the Application do?
-The workflow application invokes 3 activities in the following sequence
-``Step 1`` --> ``Step 2`` --> ``Step 3`` `
+The workflow application invokes 4 activities in the following sequence
+``1) Create CustReg Record`` --> ``2) Create Mailer Record`` --> ``3) Create Payment Account`` --> ``4) Set Payment Account Type (ACH, Credit)`` 
 
-Each Activity or step calls a Rest API and gets a response. 
-If the API fails (when the REST API is not running for example), 
+Activities 1 & 2 are invoked in sequence as soon as the workflow instance begins.
+The workflow instance is now awaiting a user click on the application UI, on this signal Activity 3 is invoked.
+After Activity 3 is completed, the workflow instance is awaiting a user click on the application UI to set the Payment type, on this signal Activity 4 is invoked.
+
+
+Each Activity or step calls a Rest API and gets a response. The response payload could be used in subsequent activities. 
+If the API call fails (when the REST API is not running for example), 
 the temporal worflow engine persists the state of the activity 
-to retry based on the following logic:
+to retry with a backoff coefficient up to a given number of attempts.
+
 
 
 
