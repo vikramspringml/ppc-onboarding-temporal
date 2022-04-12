@@ -11,9 +11,51 @@ Clone the repo ```https://github.com/vikramspringml/ppc-onboarding-demo.git```
 
 Use ```mvn install clean package spring-boot:run``` to run the application.
 
-Invoke the REST API to start the workflow instance using POST ```http://localhost:8080/startWorkflow?id=[workflowid]```
+Invoke the REST API to start the workflow instance using POST ```http://localhost:8080/start```
+,Use the POST payload body
+```json
+{
+    "username": "brian",
+    "password": "test",
+    "secqtn1": "test",
+    "secqtn2": "test",
+    "contactTitle": "test",
+    "contactFName":"fname",
+    "contactLName":"lname",
+    "contactEmail":"test@usps.gov"
+}
+```
 
-Invoke the REST API to view the status of the workflow instance using GET ```http://localhost:8080/getwfstatus?id=onboarding_[workflowid]```
+Invoke the REST API to view the latest status of the workflow instance using GET 
+```http://localhost:8080/getwfstatus?id=brian```
+
+Invoke the REST API to CONTINUE the workflow instance using POST ```http://localhost:8080/step2```
+,Use the POST payload body
+```json
+{
+    "username": "brian",
+    "crid": "5678765"
+}
+```
+Invoke the REST API to view the LATEST status of the workflow instance using GET
+```http://localhost:8080/getwfstatus?id=brian```
+
+Invoke the REST API to CONTINUE the workflow instance using POST ```http://localhost:8080/step3```
+,Use the POST payload body
+```json
+{
+    "username": "brian",
+    "password": "test",
+    "secqtn1": "test",
+    "secqtn2": "test",
+    "contactTitle": "test",
+    "contactFName":"fname",
+    "contactLName":"lname",
+    "contactEmail":"test@usps.gov"
+}
+```
+Invoke the REST API to view the LATEST status of the workflow instance using GET
+```http://localhost:8080/getwfstatus?id=brian```
 
 ## View the workflow using the Temporal Workflow UI
 
