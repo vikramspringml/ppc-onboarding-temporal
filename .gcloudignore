@@ -1,5 +1,26 @@
 README.md
-target/
+!target/*.jar
+target/classes/
+target/generated-sources/
+target/maven-archiver/
+target/maven-status/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+
+### Git ###
+.git
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
