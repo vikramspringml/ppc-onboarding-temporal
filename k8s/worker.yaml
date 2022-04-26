@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: ppconboarding-workflow-worker
-          image: us.gcr.io/cbregcpsandbox/ppconboarding-workflow:default
+          image: us.gcr.io/cbregcpsandbox/ppconboarding-workflow:latest
           imagePullPolicy: Always
           env:
             - name: SPRING_PROFILE
@@ -26,8 +26,8 @@ spec:
               value: "temporaltest-frontend:7233"
           resources:
             limits:
-              cpu: 500m
-              memory: 500Mi
+              cpu: 300m
+              memory: 300Mi
             requests:
-              cpu: 500m
-              memory: 500Mi
+                cpu: 100m
+                memory: 100Mi

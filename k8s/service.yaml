@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: temporal-demo-api
-          image: us.gcr.io/cbregcpsandbox/ppconboarding-workflow:default
+          image: us.gcr.io/cbregcpsandbox/ppconboarding-workflow:latest
           imagePullPolicy: Always
           env:
             - name: SPRING_PROFILE
@@ -29,8 +29,8 @@ spec:
               cpu: 500m
               memory: 500Mi
             requests:
-              cpu: 500m
-              memory: 500Mi
+              cpu: 150m
+              memory: 150Mi
           ports:
             - containerPort: 8080
 ---
