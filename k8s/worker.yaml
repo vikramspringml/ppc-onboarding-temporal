@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: temporal-demo-worker
+  name: ppconboarding-workflow-worker
   namespace: default
 spec:
   # replicas: 5
   selector:
     matchLabels:
-      app: temporal-demo-worker
+      app: ppconboarding-workflow-worker
   template:
     metadata:
       labels:
-        app: temporal-demo-worker
+        app: ppconboarding-workflow-worker
     spec:
       containers:
-        - name: temporal-demo-worker
-          image: us.gcr.io/cbregcpsandbox/temporal-springboot-demo:default
+        - name: ppconboarding-workflow-worker
+          image: us.gcr.io/cbregcpsandbox/ppconboarding-workflow:default
           imagePullPolicy: Always
           env:
             - name: SPRING_PROFILE

@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: temporal-demo-api
+  name: ppconboarding-workflow-api
   namespace: default
 spec:
   # replicas: 5
   selector:
     matchLabels:
-      app: temporal-demo-api
+      app: ppconboarding-workflow-api
   template:
     metadata:
       labels:
-        app: temporal-demo-api
+        app: ppconboarding-workflow-api
     spec:
       containers:
         - name: temporal-demo-api
-          image: us.gcr.io/cbregcpsandbox/temporal-springboot-demo:default
+          image: us.gcr.io/cbregcpsandbox/ppconboarding-workflow:default
           imagePullPolicy: Always
           env:
             - name: SPRING_PROFILE
@@ -37,11 +37,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: temporal-demo-api-svc
+  name: ppconboarding-workflow-api-svc
 spec:
   selector:
-    app: temporal-demo-api
+    app: ppconboarding-workflow-api
   ports:
     - protocol: TCP
       port: 80
       targetPort: 8080
+  type: LoadBalancer
