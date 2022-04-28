@@ -12,19 +12,19 @@ This sequence assumes
 
 # set cloud project
 
-```shell
+```sh
 gcloud config set project {PROJECT_ID}
 ```
 
 # Connect to GKE Cluster
 
-```shell
+```sh
 gcloud container clusters get-credentials GKE_CLUSTER --zone GKE_CLUSTER_ZONE --project PROJECT_ID
 ```
 
 # Verify Cluster Connection
 
-```
+```sh
 gcloud container clusters list --project PROJECT_ID
 ```
 
@@ -62,7 +62,7 @@ helm repo update
 
 # Download the Cloud SQL Auth proxy in gcloud/local (its better to test the DB connection gcloud/locally first.)
 
-```
+```sh
 wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
 
 # Make the Cloud SQL Auth proxy executable:
@@ -83,7 +83,7 @@ psql "host=127.0.0.1 port=5432 sslmode=disable dbname=temporal-test user=postgre
 
 ### Download Helm Chart Dependencies
 
-```
+```sh
 # clone temporal helm chart git repo
 git clone https://github.com/temporalio/helm-charts.git
 cd helm-charts
@@ -94,9 +94,16 @@ helm dependencies update
 
 ### Creating secrets
 
-```
+```sh
 # Create a credential file for your service account key:
-gcloud iam service-accounts keys create ~/key.json --iam-account temporal-db-sa@cbregcpsandbox.iam.gserviceaccount.com
+Replace the following values:
+
+#key-file: The path to a new output file for the private key—for example, ~/sa-private-key.json.
+#sa-name: The name of the service account to create a key for.
+#project-id: Your Google Cloud project ID.
+gcloud iam service-accounts keys create KEY_FILE --iam-account SERVICE_ACCOUNT@PROJECT_ID.iam.gserviceaccount.com
+#Example:
+#gcloud iam service-accounts keys create ~/key.json --iam-account service_account@prj_id.iam.gserviceaccount.com
 
 # Turn your service account key into a k8s Secret:
 kubectl create secret generic temporalk8s-secret --from-file=service_account.json=key.json
@@ -142,7 +149,7 @@ temporaltest-worker-headless           ClusterIP   None             <none>      
 ...
 ```
 
-```
+```bash
 $ kubectl get pods
 ...
 temporaltest-admintools-7b6c599855-8bk4x                1/1     Running   0          25m
@@ -155,13 +162,13 @@ temporaltest-worker-769b996fd-qmvbw                     1/1     Running   2     
 
 ### Running Temporal SQL TOOL From the Admin Tools Container
 
-```
+```sh
 kubectl exec -it services/temporaltest-admintools /bin/bash
 ```
 
 or
 
-```
+```sh
 #if multiple container present in pod
 kubectl exec -it services/temporaltest-admintools -c CONTAINER_NAME bash
 
@@ -171,7 +178,7 @@ kubectl exec -it services/temporaltest-admintools -c admin-tools bash
 
 ### create and initialize the databases
 
-```
+```sh
 export SQL_PLUGIN=postgres
 export SQL_HOST=127.0.0.1 #we are using Cloud SQL Auth proxy invocations for  Unix, using TCP 
 export SQL_PORT=DB_PORT
@@ -182,8 +189,8 @@ export SQL_PASSWORD=DB_PASSWORD
 #temporal-sql-tool --ep 127.0.0.1 -p 5432 -u postgres -pw tadmin --pl postgres create-database -database temporal
 
 
-temporal-sql-tool  --pl postgres create-database -database temporal
-temporal-sql-tool --ep 127.0.0.1 -p 5432 -u postgres -pw postgres --pl postgres --db temporal setup -v 0.0
+temporal-sql-tool --pl postgres create-database -database temporal
+temporal-sql-tool --pl postgres --db temporal setup -v 0.0
 temporal-sql-tool --pl postgres --db temporal update-schema -d ./schema/postgresql/v96/temporal/versioned
 
 temporal-sql-tool --pl postgres create --db temporal_visibility
@@ -195,20 +202,20 @@ temporal-sql-tool --pl postgres --db temporal_visibility update-schema -d ./sche
 
 You can also shell into `admin-tools` container via [k9s](https://github.com/derailed/k9s) or by running
 
-```
+```sh
 kubectl exec -it services/temporaltest-admintools /bin/bash
 ```
 
 or
 
-```
+```sh
 #if multiple container present in pod
 kubectl exec -it services/temporaltest-admintools -c admin-tools bash
 ```
 
 and run Temporal CLI from there:
 
-```
+```bash
 bash-5.0# tctl namespace list
 Name: temporal-system
 Id: 32049b68-7872-4094-8e63-d0dd59896a83
@@ -229,18 +236,18 @@ Bad binaries to reset:
 +-----------------+----------+------------+--------+
 ```
 
-```
+```bash
 bash-5.0# tctl --namespace nonesuch namespace desc
 Error: Namespace nonesuch does not exist.
 Error Details: Namespace nonesuch does not exist.
 ```
 
-```
+```bash
 bash-5.0# tctl --namespace nonesuch namespace re
 Namespace nonesuch successfully registered.
 ```
 
-```
+```bash
 bash-5.0# tctl --namespace nonesuch namespace desc
 Name: nonesuch
 UUID: 465bb575-8c01-43f8-a67d-d676e1ae5eae
@@ -267,7 +274,7 @@ Bad binaries to reset:
 
 ### Uninstalling
 
-```
+```sh
 helm uninstall temporaltest
 ```
 
@@ -275,6 +282,6 @@ helm uninstall temporaltest
 
 ### Once you initialized the two databases, instead of modifying values/values.postgresql.yaml, you can supply those values in your command line, and run
 
-```
+```sh
 helm install -f values/values.cloudsqlproxy.yaml -f values/values.postgresql.yaml temporaltest --set elasticsearch.enabled=false --set prometheus.enabled=false --set grafana.enabled=false --set server.config.persistence.default.sql.user=postgres --set server.config.persistence.default.sql.password=tadmin --set server.config.persistence.visibility.sql.user=postgres --set server.config.persistence.visibility.sql.password=tadmin --set server.config.persistence.default.sql.host=127.0.0.1 --set server.config.persistence.visibility.sql.host=127.0.0.1 . --timeout 900s
 ```
