@@ -70,10 +70,8 @@ chmod +x cloud_sql_proxy
 
 # Get the instance connection  name from Cloud SQL Instances
 # Start the Cloud SQL Auth proxy
-./cloud_sql_proxy -instances=_PROJECTNAME_:_REGION_:_INSTANCENAME_=tcp:5432
+./cloud_sql_proxy -instances=_PROJECTID_:_ZONE_:_INSTANCENAME_=tcp:5432
 
-Example:
-./cloud_sql_proxy -instances=cbregcpsandbox:us-central1:temporal-postgre-db=tcp:5432
 
 # run below command in other terminal to confirm the connection and see the output in previous terminal
 psql "host=127.0.0.1 port=5432 sslmode=disable dbname=temporal-test user=postgres"
@@ -160,7 +158,7 @@ temporaltest-worker-769b996fd-qmvbw                     1/1     Running   2     
 ...
 ```
 
-### Running Temporal SQL TOOL From the Admin Tools Container
+### Running TEMPORAL SQL TOOL From the Admin Tools Container
 
 ```sh
 kubectl exec -it services/temporaltest-admintools /bin/bash
