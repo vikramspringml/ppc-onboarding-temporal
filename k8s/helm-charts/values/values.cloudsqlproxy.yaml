@@ -1,0 +1,37 @@
+server:
+  sidecarContainers:
+    - name: cloud-sql-proxy
+      image: gcr.io/cloudsql-docker/gce-proxy:1.28.0
+      command:
+          - "/cloud_sql_proxy"
+
+          # If connecting from a VPC-native GKE cluster, you can use the
+          # following flag to have the proxy connect over private IP
+          # - "-ip_address_types=PRIVATE"
+
+          # By default, the proxy will write all logs to stderr. In some
+          # environments, anything printed to stderr is consider an error. To
+          # disable this behavior and write all logs to stdout (except errors
+          # which will still go to stderr), use:
+          - "-log_debug_stdout"
+
+          # Replace DB_PORT with the port the proxy should listen on
+          # Defaults: MySQL: 3306, Postgres: 5432, SQLServer: 1433
+          - "-instances=_PROJECTID_:_ZONE_:_INSTANCENAME_=tcp:5432"
+
+        # [START cloud_sql_proxy_k8s_volume_mount]
+          # This flag specifies where the service account key can be found
+          - "-credential_file=/secret/temporalk8s-secret/service_account.json"
+      securityContext:
+          # The default Cloud SQL proxy image runs as the
+          # "nonroot" user and group (uid: 65532) by default.
+        runAsNonRoot: true
+      volumeMounts:
+        - name: <YOUR-SA-SECRET-VOLUME> #e.g. temporalk8s-secret
+          mountPath: /secret/temporalk8s-secret
+          readOnly: true
+
+  additionalVolumes:
+    - name: <YOUR-SA-SECRET-VOLUME> #e.g. temporalk8s-secret
+      secret:
+        secretName: <YOUR-SA-SECRET> #e.g. temporalk8s-secret

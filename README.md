@@ -1,7 +1,37 @@
-# PPC Sample Temporal Workflow 
-Workflow Demo using Temporal.io (Spring Boot Example)
+# Customer Onboarding Temporal Workflow 
+Workflow Demo using Temporal.io (Spring Boot Example) for Onboarding use case
 
-## Pre-requisites
+## Sections
+
+1. [What does the Application do?](#what-does-the-application-do)
+2. [What is Temporal.io ?](#what-is-temporalio-)
+3. [Pre-requisites](#pre-requisites-to-run-locally)
+4. [Run the application](#run-the-application)
+5. [Invoke the API](#invoke-the-api)
+6. [View the workflow instance](#view-the-workflow-instance)
+7. [Running on GKE](#running-on-gke)
+
+
+## What does the Application do?
+The workflow application invokes 4 activities in the following sequence
+``1) Create CustReg Record`` --> ``2) Create Mailer Record`` --> ``3) Create Payment Account`` --> ``4) Set Payment Account Type (ACH, Credit)`` 
+
+Activities 1 & 2 are invoked in sequence as soon as the workflow instance begins.
+The workflow instance is now awaiting a user click on the application UI, on this signal Activity 3 is invoked.
+After Activity 3 is completed, the workflow instance is awaiting a user click on the application UI to set the Payment type, on this signal Activity 4 is invoked.
+
+
+Each Activity or step calls a Rest API and gets a response. The response payload could be used in subsequent activities. 
+If the API call fails (when the REST API is not running for example), 
+the temporal worflow engine persists the state of the activity 
+to retry with a backoff coefficient up to a given number of attempts.
+
+
+## What is Temporal.io ?
+
+[Temporal](https://docs.temporal.io/) ```https://github.com/temporalio``` is an orchestration engine (MIT License) that can be used to orchestrate services at scale.
+
+## Pre-requisites to run locally
 You must make sure a temporal server is running
 https://github.com/temporalio/docker-compose#readme
 
@@ -10,6 +40,8 @@ https://github.com/temporalio/docker-compose#readme
 Clone the repo ```https://github.com/vikramspringml/ppc-onboarding-demo.git```
 
 Use ```mvn install clean package spring-boot:run``` to run the application.
+
+### Invoke the API
 
 Invoke the REST API to start the workflow instance using POST ```http://localhost:8080/start```
 ,Use the POST payload body
@@ -57,33 +89,18 @@ Invoke the REST API to CONTINUE the workflow instance using POST ```http://local
 Invoke the REST API to view the LATEST status of the workflow instance using GET
 ```http://localhost:8080/getwfstatus?id=brian```
 
-## View the workflow using the Temporal Workflow UI
+## View the workflow instance 
+
+Once the API is invoked you can view the workflow instances using the Temporal Web UI
 
 On a web browser, navigate to ```http://localhost:8088/``` to access the Temporal UI to observe the workflow instances. 
 
-## What does the Application do?
-The workflow application invokes 4 activities in the following sequence
-``1) Create CustReg Record`` --> ``2) Create Mailer Record`` --> ``3) Create Payment Account`` --> ``4) Set Payment Account Type (ACH, Credit)`` 
 
-Activities 1 & 2 are invoked in sequence as soon as the workflow instance begins.
-The workflow instance is now awaiting a user click on the application UI, on this signal Activity 3 is invoked.
-After Activity 3 is completed, the workflow instance is awaiting a user click on the application UI to set the Payment type, on this signal Activity 4 is invoked.
+## Running on GKE
 
+The application can be run as a [Workflow client](k8s/service.yaml) and [worker](k8s/worker.yaml) using env variable configuration. The workflow client is a REST API invoked application that creates the workflow instance on the Temporal server. The workflow worker is an application that listens to Temporal task queues and performs the activities defined in the workflow.
 
-Each Activity or step calls a Rest API and gets a response. The response payload could be used in subsequent activities. 
-If the API call fails (when the REST API is not running for example), 
-the temporal worflow engine persists the state of the activity 
-to retry with a backoff coefficient up to a given number of attempts.
-
-
-
-
-## What is Temporal.io ?
-
-[Temporal](https://docs.temporal.io/) ```https://github.com/temporalio``` is an orchestration engine (MIT License) that can be used to orchestrate services at scale.
-
-
-### Manually Create container image
+### Manually Create container image for your workflow client and worker
 
 #### Build and package the code by running mvn
 ```shell
@@ -151,7 +168,8 @@ Navigate to http://localhost:8888 on your browser
 ```shell
 kubectl port-forward services/temporal-demo-api-svc 8080:80
 ```
-Invoke the API on curl using 
-```shell 
-curl -X POST http://localhost:8080/startWorkflow?id=002
-``` 
+Invoke the API on curl using [Invoke the API](#invoke-the-api)
+
+### Install Temporal using Cloud SQL PostGRES Database with Custom Helm Chart  
+
+[See instructions here](k8s/helm-charts/readme.md)
