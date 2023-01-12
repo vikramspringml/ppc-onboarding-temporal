@@ -2,6 +2,8 @@ package com.springml.temporal.demo.model;
 
 /**
  {
+ "custregid": "12345",
+ "mailerid": null,
  "username": "test",
  "password": "test",
  "secqtn1": "test",
@@ -34,6 +36,13 @@ public class CustomerRequest {
     private String mailerid;
     private String username;
     private String password;
+    private String secqtn1;
+    private String secqtn2;
+    private String contactTitle;
+    private String contactFName;
+    private String contactLName;
+    private String contactEmail;
+
 
     public String getUsername() {
         return username;
@@ -42,9 +51,6 @@ public class CustomerRequest {
     public void setUsername(String username) {
         this.username = username;
     }
-
-    private String secqtn1;
-    private String secqtn2;
 
     public String getPassword() {
         return password;
@@ -116,10 +122,7 @@ public class CustomerRequest {
         this.contactEmail = contactEmail;
     }
 
-    private String contactTitle;
-    private String contactFName;
-    private String contactLName;
-    private String contactEmail;
+
 
     public CustomerRequest(){
     }

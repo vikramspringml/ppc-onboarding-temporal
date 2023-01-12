@@ -42,7 +42,6 @@ public class ShipWorkflowImpl implements ShipWorkFlow {
 
         Workflow.await(() -> paymentAccountRequested == true );
         if(paymentAccountRequested == true){
-//            System.out.println("customer:"+customer);
             PaymentAccountRequest req = new PaymentAccountRequest();
             req.setUsername(customer.getUsername());
             req.setCrid(crid);

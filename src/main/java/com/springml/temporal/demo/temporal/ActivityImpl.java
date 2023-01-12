@@ -1,6 +1,7 @@
 package com.springml.temporal.demo.temporal;
 
 import com.springml.temporal.demo.model.*;
+import com.springml.temporal.demo.service.RestTemplateHelper;
 import io.temporal.workflow.Workflow;
 import org.slf4j.Logger;
 import org.springframework.http.HttpEntity;
@@ -20,22 +21,62 @@ public class ActivityImpl implements Activity{
     Logger log = Workflow.getLogger(ActivityImpl.class);
 
     public RestTemplate restTemplate;
+    public RestTemplateHelper restTemplateHelper;
 
-    public ActivityImpl(RestTemplate template) {
+
+    public ActivityImpl(RestTemplate template)
+    {
         restTemplate = template;
+    }
+
+
+    public String custRegHelper(CustomerRequest customer) {
+//        String url = "https://34.149.174.177.nip.io/v1/crid/customer";
+//        String url = "https://us-central1-cbregcpsandbox.cloudfunctions.net/custreg";
+        String url = "http://localhost:8081/api/crid";
+        System.out.println("custReg: "+customer.getUsername());
+        System.out.println("custReg URL"+ url);
+        try {
+            CustomerResponse resp = restTemplateHelper.postForEntity(CustomerResponse.class, url, customer);
+            return resp.getCrid();
+//            HttpHeaders headers = new HttpHeaders();
+//            headers.setContentType(MediaType.APPLICATION_JSON);
+//            HttpEntity<CustomerRequest> request = new HttpEntity<>(customer, headers);
+//
+//            ResponseEntity<CustomerResponse> response = restTemplate.postForEntity(
+//                    new URI(url), request, CustomerResponse.class);
+//            System.out.println("custreg response:" + response);
+//            return response.getBody().getCrid();
+        } catch (RestClientException e) {
+            // Get the activity type
+            String type = io.temporal.activity.Activity.getExecutionContext().getInfo().getActivityType();
+            // Get the retry attempt
+            int attempt = io.temporal.activity.Activity.getExecutionContext().getInfo().getAttempt();
+            // Wrap checked exception and throw
+            throw io.temporal.activity.Activity.wrap(
+                    new Exception("Activity type: " + type + " attempt times: " + attempt, e));
+        }
+//        catch (URISyntaxException e) {
+//            e.printStackTrace();
+//        }
+//        return null;
     }
 
     @Override
     public String custReg(CustomerRequest customer) {
+//        String url = "https://34.149.174.177.nip.io/v1/crid/customer";
+//        String url = "https://us-central1-cbregcpsandbox.cloudfunctions.net/custreg";
+        String url = "http://localhost:8081/api/crid";
         System.out.println("custReg: "+customer.getUsername());
+        System.out.println("custReg URL"+ url);
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<CustomerRequest> request = new HttpEntity<>(customer, headers);
 
             ResponseEntity<CustomerResponse> response = restTemplate.postForEntity(
-                    new URI("https://34.149.174.177.nip.io/v1/crid/customer"), request, CustomerResponse.class);
-            System.out.println("response:" + response);
+                    new URI(url), request, CustomerResponse.class);
+            System.out.println("custreg response:" + response);
             return response.getBody().getCrid();
         } catch (RestClientException e) {
             // Get the activity type
@@ -59,7 +100,7 @@ public class ActivityImpl implements Activity{
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<CustomerRequest> request = new HttpEntity<>(customer, headers);
             ResponseEntity<MailerResponse> response = restTemplate.postForEntity(
-                    "https://34.149.174.177.nip.io/v2/mailer-id/poMidRequest/fetchOrRequest", request,
+                    "http://localhost:8081/api/mid", request,
                     MailerResponse.class);
             System.out.println("mailer:"+response);
             return response.getBody().getCustomerMid();
@@ -84,7 +125,7 @@ public class ActivityImpl implements Activity{
 
 
             PaymentResp response = restTemplate.getForObject(
-                    "https://34.149.174.177.nip.io/v1/eps/customer/eps?"+
+                    "http://localhost:8081/api/payment?"+
                             "username={username}&crid={crid}", PaymentResp.class, queryParams);
             System.out.println(response);
             return response;

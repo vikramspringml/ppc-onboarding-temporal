@@ -10,7 +10,7 @@ import io.temporal.workflow.WorkflowMethod;
 @WorkflowInterface
 public interface ShipWorkFlow {
 
-    public static final String QUEUE_NAME = "PPCOnboarding";
+    public static final String QUEUE_NAME = "PPCOnboarding1";
 
     @WorkflowMethod
     void startWorkflow(CustomerRequest customer);

@@ -18,7 +18,9 @@ import org.apache.commons.lang3.StringUtils;
 @Configuration
 public class TemporalConfig {
 
-    private String temporalServiceAddress = StringUtils.defaultString(System.getenv("TEMPORAL_SVC_ADDR"), "127.0.0.1:7233");
+    private String temporalServiceAddress = StringUtils.
+            defaultString(System.getenv("TEMPORAL_SVC_ADDR"),
+            "127.0.0.1:7233");
 
     private String temporalNamespace = "default";
 

@@ -16,7 +16,7 @@ public class TemporalDemoApplication {
 	public static void main(String[] args) {
 
 		ConfigurableApplicationContext context = SpringApplication.run(TemporalDemoApplication.class, args);
-//		String workerFlag = StringUtils.defaultString( System.getenv("WORKER"), "APP");
+		String workerFlag = StringUtils.defaultString( System.getenv("WORKER"), "APP");
 //		if("WORKER".equals(workerFlag)) {
 			WorkerFactory factory = context.getBean(WorkerFactory.class);
 			Activity onboardActivities = context.getBean(Activity.class);
